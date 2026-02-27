@@ -4,30 +4,16 @@
 
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<title>AI Photo Enhancer</title>
+<title>Topaz AI Enhancer</title>
 
 <style>
 
 body{
-background:#000;
+background:black;
 color:white;
-font-family:Arial;
 text-align:center;
+font-family:Arial;
 margin-top:40px;
-}
-
-.glass{
-
-margin:20px;
-
-padding:20px;
-
-border-radius:25px;
-
-background:rgba(255,255,255,0.08);
-
-backdrop-filter:blur(20px);
-
 }
 
 button{
@@ -43,8 +29,6 @@ border:none;
 background:white;
 
 color:black;
-
-margin-top:15px;
 
 }
 
@@ -62,17 +46,15 @@ max-width:90%;
 
 <body>
 
-<div class="glass">
-
-<h2>Real AI Photo Enhancer</h2>
+<h2>Topaz AI Style Enhancer</h2>
 
 <input type="file" id="upload">
 
-<br>
+<br><br>
 
 <button onclick="enhanceAI()">
 
-Enhance AI 4K
+Enhance Ultra HD
 
 </button>
 
@@ -80,33 +62,23 @@ Enhance AI 4K
 
 <img id="output">
 
-</div>
-
 <script>
 
 async function enhanceAI(){
 
 let file=document.getElementById("upload").files[0];
 
-if(!file){
+if(!file)return;
 
-alert("Upload Photo");
+let formData=new FormData();
 
-return;
+formData.append("file",file);
 
-}
-
-let reader=new FileReader();
-
-reader.onloadend=async function(){
-
-let base64=reader.result;
-
-document.getElementById("output").src="loading.gif";
+document.getElementById("output").src="";
 
 let response=await fetch(
 
-"https://api.deepai.org/api/torch-srgan",
+"https://api.replicate.com/v1/predictions",
 
 {
 
@@ -114,13 +86,21 @@ method:"POST",
 
 headers:{
 
-"api-key":"quickstart-QUICKSTART"
+"Authorization":"Token YOUR_API_KEY",
+
+"Content-Type":"application/json"
 
 },
 
-body:new URLSearchParams({
+body:JSON.stringify({
 
-image:base64
+version:"42fed1c497b8b8f90b8c3c3c0f6c5c9a",
+
+input:{
+
+image:file
+
+}
 
 })
 
@@ -128,11 +108,7 @@ image:base64
 
 let data=await response.json();
 
-document.getElementById("output").src=data.output_url;
-
-}
-
-reader.readAsDataURL(file);
+console.log(data);
 
 }
 
