@@ -4,62 +4,58 @@
 
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<title>4K AI Enhancer</title>
+<title>Ultra AI 4K Enhancer</title>
 
 <style>
-
-/* Background */
 
 body{
 margin:0;
 font-family:Arial;
-background:linear-gradient(135deg,#000000,#111111);
+background:linear-gradient(140deg,#000,#0a0a0a);
 color:white;
 text-align:center;
 }
 
-/* Apple Glass Card */
+/* Glass UI */
 
 .glass{
 
-margin:20px;
+margin:15px;
 padding:25px;
 
-border-radius:25px;
+border-radius:30px;
 
-background:rgba(255,255,255,0.08);
+background:rgba(255,255,255,0.07);
 
-backdrop-filter: blur(20px);
+backdrop-filter:blur(30px);
 
-box-shadow:0px 10px 40px rgba(0,0,0,0.6);
+box-shadow:0px 20px 70px rgba(0,0,0,0.8);
 
 }
 
-/* Title */
+/* Upload Box */
 
-h1{
-font-size:28px;
-margin-bottom:10px;
-}
+.uploadBox{
 
-/* Upload Button */
+border:2px dashed white;
 
-input{
+padding:30px;
 
-padding:10px;
+border-radius:20px;
+
 margin-top:10px;
 
 }
 
-/* Enhance Button */
+/* Buttons */
 
 button{
 
-margin-top:20px;
+margin-top:15px;
 
 padding:15px 30px;
 
-font-size:18px;
+font-size:16px;
 
 border-radius:20px;
 
@@ -75,7 +71,15 @@ cursor:pointer;
 
 }
 
-/* Before After */
+/* Download */
+
+.download{
+
+background:#00ff99;
+
+}
+
+/* Container */
 
 .container{
 
@@ -103,14 +107,13 @@ display:block;
 
 }
 
-/* After overlay */
+/* After */
 
 .after{
 
 position:absolute;
 
 top:0;
-
 left:0;
 
 width:50%;
@@ -124,22 +127,20 @@ overflow:hidden;
 .slider{
 
 width:90%;
-
 margin-top:20px;
 
 }
 
-/* Loading Animation */
+/* Loader */
 
 .loader{
 
 display:none;
-
 margin-top:20px;
 
 }
 
-.loader div{
+.loader span{
 
 width:10px;
 height:10px;
@@ -150,19 +151,19 @@ display:inline-block;
 
 border-radius:50%;
 
-animation:jump 1s infinite;
-
 margin:5px;
+
+animation:jump 1s infinite;
 
 }
 
-.loader div:nth-child(2){
+.loader span:nth-child(2){
 
 animation-delay:0.2s;
 
 }
 
-.loader div:nth-child(3){
+.loader span:nth-child(3){
 
 animation-delay:0.4s;
 
@@ -171,8 +172,24 @@ animation-delay:0.4s;
 @keyframes jump{
 
 0%{transform:translateY(0)}
-50%{transform:translateY(-10px)}
+50%{transform:translateY(-12px)}
 100%{transform:translateY(0)}
+
+}
+
+/* Glow */
+
+.glow{
+
+animation:glow 2s infinite;
+
+}
+
+@keyframes glow{
+
+0%{box-shadow:0px 0px 10px white}
+50%{box-shadow:0px 0px 30px white}
+100%{box-shadow:0px 0px 10px white}
 
 }
 
@@ -184,27 +201,41 @@ animation-delay:0.4s;
 
 <div class="glass">
 
-<h1>4K AI Photo Enhancer</h1>
+<h2>Ultra AI 4K Enhancer</h2>
 
-Upload → Enhance → Slide
+<div class="uploadBox glow"
 
-<br>
+ondrop="dropHandler(event)"
+
+ondragover="dragOver(event)">
+
+Drop Photo Here
+
+<br><br>
 
 <input type="file" id="upload">
 
-<br>
+</div>
 
 <button onclick="enhance()">
 
-Enhance 4K
+Enhance Ultra 4K
+
+</button>
+
+<br>
+
+<button onclick="downloadImage()" class="download">
+
+Download 4K
 
 </button>
 
 <div class="loader" id="loader">
 
-<div></div>
-<div></div>
-<div></div>
+<span></span>
+<span></span>
+<span></span>
 
 </div>
 
@@ -247,19 +278,41 @@ afterDiv.style.width=this.value+"%";
 
 }
 
+/* Drag Drop */
+
+function dragOver(e){
+
+e.preventDefault();
+
+}
+
+function dropHandler(e){
+
+e.preventDefault();
+
+document.getElementById("upload").files=e.dataTransfer.files;
+
+enhance();
+
+}
+
+/* Auto Enhance */
+
+document.getElementById("upload").addEventListener("change",function(){
+
+enhance();
+
+});
+
 /* Enhance */
+
+let enhancedImage="";
 
 function enhance(){
 
 const file=document.getElementById("upload").files[0];
 
-if(!file){
-
-alert("Upload Photo");
-
-return;
-
-}
+if(!file)return;
 
 document.getElementById("loader").style.display="block";
 
@@ -277,9 +330,9 @@ canvas.width=img.width*2;
 
 canvas.height=img.height*2;
 
-/* Enhancement */
+/* Ultra Enhancement */
 
-ctx.filter="contrast(135%) brightness(110%) saturate(110%)";
+ctx.filter="contrast(140%) brightness(110%) saturate(120%)";
 
 ctx.imageSmoothingEnabled=true;
 
@@ -287,13 +340,31 @@ ctx.imageSmoothingQuality="high";
 
 ctx.drawImage(img,0,0,canvas.width,canvas.height);
 
-document.getElementById("after").src=canvas.toDataURL();
+enhancedImage=canvas.toDataURL();
+
+document.getElementById("after").src=enhancedImage;
 
 document.getElementById("loader").style.display="none";
 
 }
 
 img.src=URL.createObjectURL(file);
+
+}
+
+/* Download */
+
+function downloadImage(){
+
+if(enhancedImage=="")return;
+
+let a=document.createElement("a");
+
+a.href=enhancedImage;
+
+a.download="Ultra4K.png";
+
+a.click();
 
 }
 
