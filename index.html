@@ -4,30 +4,176 @@
 
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<title>4K Photo Enhancer</title>
+<title>4K AI Enhancer</title>
 
 <style>
 
+/* Background */
+
 body{
-background:black;
+margin:0;
+font-family:Arial;
+background:linear-gradient(135deg,#000000,#111111);
 color:white;
 text-align:center;
-font-family:Arial;
-margin-top:50px;
 }
+
+/* Apple Glass Card */
+
+.glass{
+
+margin:20px;
+padding:25px;
+
+border-radius:25px;
+
+background:rgba(255,255,255,0.08);
+
+backdrop-filter: blur(20px);
+
+box-shadow:0px 10px 40px rgba(0,0,0,0.6);
+
+}
+
+/* Title */
+
+h1{
+font-size:28px;
+margin-bottom:10px;
+}
+
+/* Upload Button */
+
+input{
+
+padding:10px;
+margin-top:10px;
+
+}
+
+/* Enhance Button */
 
 button{
-padding:15px;
+
+margin-top:20px;
+
+padding:15px 30px;
+
 font-size:18px;
-background:red;
-color:white;
+
+border-radius:20px;
+
 border:none;
-border-radius:10px;
+
+background:white;
+
+color:black;
+
+font-weight:bold;
+
+cursor:pointer;
+
 }
 
-img{
+/* Before After */
+
+.container{
+
+position:relative;
+
+width:95%;
+
+margin:auto;
+
 margin-top:20px;
-max-width:90%;
+
+border-radius:20px;
+
+overflow:hidden;
+
+}
+
+/* Images */
+
+img{
+
+width:100%;
+
+display:block;
+
+}
+
+/* After overlay */
+
+.after{
+
+position:absolute;
+
+top:0;
+
+left:0;
+
+width:50%;
+
+overflow:hidden;
+
+}
+
+/* Slider */
+
+.slider{
+
+width:90%;
+
+margin-top:20px;
+
+}
+
+/* Loading Animation */
+
+.loader{
+
+display:none;
+
+margin-top:20px;
+
+}
+
+.loader div{
+
+width:10px;
+height:10px;
+
+background:white;
+
+display:inline-block;
+
+border-radius:50%;
+
+animation:jump 1s infinite;
+
+margin:5px;
+
+}
+
+.loader div:nth-child(2){
+
+animation-delay:0.2s;
+
+}
+
+.loader div:nth-child(3){
+
+animation-delay:0.4s;
+
+}
+
+@keyframes jump{
+
+0%{transform:translateY(0)}
+50%{transform:translateY(-10px)}
+100%{transform:translateY(0)}
+
 }
 
 </style>
@@ -36,43 +182,114 @@ max-width:90%;
 
 <body>
 
-<h2>4K AI Photo Enhancer</h2>
+<div class="glass">
+
+<h1>4K AI Photo Enhancer</h1>
+
+Upload → Enhance → Slide
+
+<br>
 
 <input type="file" id="upload">
 
-<br><br>
+<br>
 
-<button onclick="enhance()">Enhance 4K</button>
+<button onclick="enhance()">
 
-<br><br>
+Enhance 4K
 
-<canvas id="canvas"></canvas>
+</button>
+
+<div class="loader" id="loader">
+
+<div></div>
+<div></div>
+<div></div>
+
+</div>
+
+<div class="container">
+
+<img id="before">
+
+<div class="after">
+
+<img id="after">
+
+</div>
+
+</div>
+
+<input type="range"
+
+min="0"
+
+max="100"
+
+value="50"
+
+class="slider"
+
+id="slider">
+
+</div>
 
 <script>
 
-function enhance(){
+/* Slider */
 
-const file = document.getElementById("upload").files[0];
+const slider=document.getElementById("slider");
+const afterDiv=document.querySelector(".after");
 
-if(!file){
-alert("Upload Photo First");
-return;
+slider.oninput=function(){
+
+afterDiv.style.width=this.value+"%";
+
 }
 
-const img = new Image();
+/* Enhance */
+
+function enhance(){
+
+const file=document.getElementById("upload").files[0];
+
+if(!file){
+
+alert("Upload Photo");
+
+return;
+
+}
+
+document.getElementById("loader").style.display="block";
+
+const img=new Image();
 
 img.onload=function(){
 
-const canvas=document.getElementById("canvas");
+document.getElementById("before").src=img.src;
+
+const canvas=document.createElement("canvas");
+
 const ctx=canvas.getContext("2d");
 
 canvas.width=img.width*2;
+
 canvas.height=img.height*2;
 
+/* Enhancement */
+
+ctx.filter="contrast(135%) brightness(110%) saturate(110%)";
+
 ctx.imageSmoothingEnabled=true;
+
 ctx.imageSmoothingQuality="high";
 
 ctx.drawImage(img,0,0,canvas.width,canvas.height);
+
+document.getElementById("after").src=canvas.toDataURL();
+
+document.getElementById("loader").style.display="none";
 
 }
 
