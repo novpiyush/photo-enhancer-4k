@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html>
+<head>
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>4K Photo Enhancer</title>
+
+<style>
+
+body{
+background:black;
+color:white;
+text-align:center;
+font-family:Arial;
+margin-top:50px;
+}
+
+input{
+margin:20px;
+}
+
+button{
+padding:15px;
+font-size:18px;
+background:red;
+color:white;
+border:none;
+border-radius:10px;
+}
+
+img{
+margin-top:20px;
+max-width:90%;
+}
+
+</style>
+
+</head>
+
+<body>
+
+<h2>AI 4K Photo Enhancer</h2>
+
+<input type="file" id="upload">
+
+<br>
+
+<button onclick="enhance()">Enhance 4K</button>
+
+<br>
+
+<img id="output">
+
+<script>
+
+function enhance(){
+
+let file = document.getElementById("upload").files[0];
+
+let img = new Image();
+
+img.onload = function(){
+
+let canvas = document.createElement("canvas");
+let ctx = canvas.getContext("2d");
+
+canvas.width = img.width*2;
+canvas.height = img.height*2;
+
+ctx.imageSmoothingEnabled = true;
+ctx.imageSmoothingQuality = "high";
+
+ctx.drawImage(img,0,0,canvas.width,canvas.height);
+
+document.getElementById("output").src =
+canvas.toDataURL();
+
+}
+
+img.src = URL.createObjectURL(file);
+
+}
+
+</script>
+
+</body>
+
+</html>
