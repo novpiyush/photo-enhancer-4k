@@ -4,60 +4,39 @@
 
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<title>Ultra AI 4K Enhancer</title>
+<title>AI Photo Enhancer</title>
 
 <style>
 
 body{
-margin:0;
-font-family:Arial;
-background:linear-gradient(140deg,#000,#0a0a0a);
+background:#000;
 color:white;
+font-family:Arial;
 text-align:center;
+margin-top:40px;
 }
-
-/* Glass UI */
 
 .glass{
 
-margin:15px;
-padding:25px;
+margin:20px;
 
-border-radius:30px;
+padding:20px;
 
-background:rgba(255,255,255,0.07);
+border-radius:25px;
 
-backdrop-filter:blur(30px);
+background:rgba(255,255,255,0.08);
 
-box-shadow:0px 20px 70px rgba(0,0,0,0.8);
-
-}
-
-/* Upload Box */
-
-.uploadBox{
-
-border:2px dashed white;
-
-padding:30px;
-
-border-radius:20px;
-
-margin-top:10px;
+backdrop-filter:blur(20px);
 
 }
-
-/* Buttons */
 
 button{
 
-margin-top:15px;
+padding:15px;
 
-padding:15px 30px;
+font-size:18px;
 
-font-size:16px;
-
-border-radius:20px;
+border-radius:15px;
 
 border:none;
 
@@ -65,131 +44,15 @@ background:white;
 
 color:black;
 
-font-weight:bold;
-
-cursor:pointer;
+margin-top:15px;
 
 }
-
-/* Download */
-
-.download{
-
-background:#00ff99;
-
-}
-
-/* Container */
-
-.container{
-
-position:relative;
-
-width:95%;
-
-margin:auto;
-
-margin-top:20px;
-
-border-radius:20px;
-
-overflow:hidden;
-
-}
-
-/* Images */
 
 img{
 
-width:100%;
-
-display:block;
-
-}
-
-/* After */
-
-.after{
-
-position:absolute;
-
-top:0;
-left:0;
-
-width:50%;
-
-overflow:hidden;
-
-}
-
-/* Slider */
-
-.slider{
-
-width:90%;
 margin-top:20px;
 
-}
-
-/* Loader */
-
-.loader{
-
-display:none;
-margin-top:20px;
-
-}
-
-.loader span{
-
-width:10px;
-height:10px;
-
-background:white;
-
-display:inline-block;
-
-border-radius:50%;
-
-margin:5px;
-
-animation:jump 1s infinite;
-
-}
-
-.loader span:nth-child(2){
-
-animation-delay:0.2s;
-
-}
-
-.loader span:nth-child(3){
-
-animation-delay:0.4s;
-
-}
-
-@keyframes jump{
-
-0%{transform:translateY(0)}
-50%{transform:translateY(-12px)}
-100%{transform:translateY(0)}
-
-}
-
-/* Glow */
-
-.glow{
-
-animation:glow 2s infinite;
-
-}
-
-@keyframes glow{
-
-0%{box-shadow:0px 0px 10px white}
-50%{box-shadow:0px 0px 30px white}
-100%{box-shadow:0px 0px 10px white}
+max-width:90%;
 
 }
 
@@ -201,170 +64,75 @@ animation:glow 2s infinite;
 
 <div class="glass">
 
-<h2>Ultra AI 4K Enhancer</h2>
-
-<div class="uploadBox glow"
-
-ondrop="dropHandler(event)"
-
-ondragover="dragOver(event)">
-
-Drop Photo Here
-
-<br><br>
+<h2>Real AI Photo Enhancer</h2>
 
 <input type="file" id="upload">
 
-</div>
+<br>
 
-<button onclick="enhance()">
+<button onclick="enhanceAI()">
 
-Enhance Ultra 4K
+Enhance AI 4K
 
 </button>
 
 <br>
 
-<button onclick="downloadImage()" class="download">
-
-Download 4K
-
-</button>
-
-<div class="loader" id="loader">
-
-<span></span>
-<span></span>
-<span></span>
-
-</div>
-
-<div class="container">
-
-<img id="before">
-
-<div class="after">
-
-<img id="after">
-
-</div>
-
-</div>
-
-<input type="range"
-
-min="0"
-
-max="100"
-
-value="50"
-
-class="slider"
-
-id="slider">
+<img id="output">
 
 </div>
 
 <script>
 
-/* Slider */
+async function enhanceAI(){
 
-const slider=document.getElementById("slider");
-const afterDiv=document.querySelector(".after");
+let file=document.getElementById("upload").files[0];
 
-slider.oninput=function(){
+if(!file){
 
-afterDiv.style.width=this.value+"%";
+alert("Upload Photo");
 
-}
-
-/* Drag Drop */
-
-function dragOver(e){
-
-e.preventDefault();
+return;
 
 }
 
-function dropHandler(e){
+let reader=new FileReader();
 
-e.preventDefault();
+reader.onloadend=async function(){
 
-document.getElementById("upload").files=e.dataTransfer.files;
+let base64=reader.result;
 
-enhance();
+document.getElementById("output").src="loading.gif";
 
-}
+let response=await fetch(
 
-/* Auto Enhance */
+"https://api.deepai.org/api/torch-srgan",
 
-document.getElementById("upload").addEventListener("change",function(){
+{
 
-enhance();
+method:"POST",
+
+headers:{
+
+"api-key":"quickstart-QUICKSTART"
+
+},
+
+body:new URLSearchParams({
+
+image:base64
+
+})
 
 });
 
-/* Enhance */
+let data=await response.json();
 
-let enhancedImage="";
-
-function enhance(){
-
-const file=document.getElementById("upload").files[0];
-
-if(!file)return;
-
-document.getElementById("loader").style.display="block";
-
-const img=new Image();
-
-img.onload=function(){
-
-document.getElementById("before").src=img.src;
-
-const canvas=document.createElement("canvas");
-
-const ctx=canvas.getContext("2d");
-
-canvas.width=img.width*2;
-
-canvas.height=img.height*2;
-
-/* Ultra Enhancement */
-
-ctx.filter="contrast(140%) brightness(110%) saturate(120%)";
-
-ctx.imageSmoothingEnabled=true;
-
-ctx.imageSmoothingQuality="high";
-
-ctx.drawImage(img,0,0,canvas.width,canvas.height);
-
-enhancedImage=canvas.toDataURL();
-
-document.getElementById("after").src=enhancedImage;
-
-document.getElementById("loader").style.display="none";
+document.getElementById("output").src=data.output_url;
 
 }
 
-img.src=URL.createObjectURL(file);
-
-}
-
-/* Download */
-
-function downloadImage(){
-
-if(enhancedImage=="")return;
-
-let a=document.createElement("a");
-
-a.href=enhancedImage;
-
-a.download="Ultra4K.png";
-
-a.click();
+reader.readAsDataURL(file);
 
 }
 
