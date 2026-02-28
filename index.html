@@ -1,44 +1,55 @@
 <!DOCTYPE html>
 <html>
 <head>
-
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-
-<title>Topaz AI Enhancer</title>
+<meta name="viewport" content="width=device-width, initial-scale=1">
 
 <style>
 
 body{
-background:black;
+margin:0;
+background:#111;
 color:white;
+font-family:sans-serif;
 text-align:center;
-font-family:Arial;
-margin-top:40px;
 }
 
-button{
 
-padding:15px;
+.container{
 
-font-size:18px;
-
-border-radius:15px;
-
-border:none;
-
-background:white;
-
-color:black;
+margin-top:30px;
 
 }
+
 
 img{
 
+max-width:90vw;
+
+border-radius:10px;
+
 margin-top:20px;
 
-max-width:90%;
+}
+
+
+/* Buttons */
+
+button{
+
+margin:10px;
+
+padding:12px 25px;
+
+font-size:16px;
+
+border:none;
+
+border-radius:10px;
+
+cursor:pointer;
 
 }
+
 
 </style>
 
@@ -46,74 +57,92 @@ max-width:90%;
 
 <body>
 
-<h2>Topaz AI Style Enhancer</h2>
+<h2>Photo Enhancer</h2>
 
 <input type="file" id="upload">
 
-<br><br>
+<br>
 
-<button onclick="enhanceAI()">
+<img id="preview">
 
-Enhance Ultra HD
-
-</button>
 
 <br>
 
-<img id="output">
+<button onclick="enhance()">
+Enhance
+</button>
+
+<button onclick="download4K()">
+Download 4K
+</button>
+
 
 <script>
 
-async function enhanceAI(){
+let originalImage;
 
-let file=document.getElementById("upload").files[0];
 
-if(!file)return;
 
-let formData=new FormData();
+document.getElementById("upload").onchange=function(e){
 
-formData.append("file",file);
+let file=e.target.files[0];
 
-document.getElementById("output").src="";
+let reader=new FileReader();
 
-let response=await fetch(
+reader.onload=function(){
 
-"https://api.replicate.com/v1/predictions",
+preview.src=reader.result;
 
-{
+originalImage=new Image();
 
-method:"POST",
-
-headers:{
-
-"Authorization":"Token YOUR_API_KEY",
-
-"Content-Type":"application/json"
-
-},
-
-body:JSON.stringify({
-
-version:"42fed1c497b8b8f90b8c3c3c0f6c5c9a",
-
-input:{
-
-image:file
+originalImage.src=reader.result;
 
 }
 
-})
+reader.readAsDataURL(file);
 
-});
+}
 
-let data=await response.json();
 
-console.log(data);
+
+function enhance(){
+
+preview.style.filter=
+
+"contrast(115%) brightness(105%) saturate(110%) sharpen(1.2)";
+
+}
+
+
+
+/* 4K Download */
+
+function download4K(){
+
+let canvas=document.createElement("canvas");
+
+let ctx=canvas.getContext("2d");
+
+
+canvas.width=2160;
+canvas.height=3840;
+
+
+ctx.drawImage(originalImage,0,0,2160,3840);
+
+
+let link=document.createElement("a");
+
+link.download="Enhanced_4K.png";
+
+link.href=canvas.toDataURL();
+
+link.click();
 
 }
 
 </script>
 
-</body>
 
+</body>
 </html>
