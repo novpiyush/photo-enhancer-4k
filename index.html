@@ -9,8 +9,8 @@ body{
 margin:0;
 background:#000;
 color:white;
-font-family:sans-serif;
 text-align:center;
+font-family:sans-serif;
 }
 
 img{
@@ -36,7 +36,7 @@ cursor:pointer;
 
 <body>
 
-<h2>HD Photo Enhancer</h2>
+<h2>Deep Black Enhancer</h2>
 
 <input type="file" id="upload">
 
@@ -46,15 +46,14 @@ cursor:pointer;
 
 <br>
 
-<button onclick="downloadHD()">
-Download High Quality
+<button onclick="downloadDark()">
+Download Deep Black HD
 </button>
 
 
 <script>
 
 let imgObj;
-
 
 upload.onchange=function(e){
 
@@ -67,6 +66,7 @@ reader.onload=function(){
 preview.src=reader.result;
 
 imgObj=new Image();
+
 imgObj.src=reader.result;
 
 }
@@ -77,48 +77,45 @@ reader.readAsDataURL(file);
 
 
 
-function downloadHD(){
+function downloadDark(){
 
 let canvas=document.createElement("canvas");
-
 let ctx=canvas.getContext("2d");
 
 
-/* Ratio Same */
+let w=imgObj.width*3;
+let h=imgObj.height*3;
 
-let ratio=imgObj.width/imgObj.height;
-
-
-/* Pixel Increase */
-
-let newWidth=imgObj.width*3;
-let newHeight=imgObj.height*3;
+canvas.width=w;
+canvas.height=h;
 
 
-canvas.width=newWidth;
-canvas.height=newHeight;
+/* Draw Image */
+
+ctx.drawImage(imgObj,0,0,w,h);
 
 
-/* Pure Black Background */
+/* Deep Black Filter */
 
-ctx.fillStyle="#000000";
-ctx.fillRect(0,0,newWidth,newHeight);
+let imageData=ctx.getImageData(0,0,w,h);
+let data=imageData.data;
 
+for(let i=0;i<data.length;i+=4){
 
-/* High Quality Render */
+data[i]*=0.75;     // Red
+data[i+1]*=0.75;   // Green
+data[i+2]*=0.75;   // Blue
 
-ctx.imageSmoothingEnabled=true;
-ctx.imageSmoothingQuality="high";
+}
 
-
-ctx.drawImage(imgObj,0,0,newWidth,newHeight);
+ctx.putImageData(imageData,0,0);
 
 
 /* Download */
 
 let link=document.createElement("a");
 
-link.download="Enhanced_Dark.png";
+link.download="DeepBlack.png";
 
 link.href=canvas.toDataURL("image/png");
 
