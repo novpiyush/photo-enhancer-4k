@@ -13,43 +13,22 @@ font-family:sans-serif;
 text-align:center;
 }
 
-
-.container{
-
-margin-top:30px;
-
-}
-
-
 img{
-
-max-width:90vw;
-
-border-radius:10px;
-
+max-width:90%;
 margin-top:20px;
-
+border-radius:10px;
 }
-
-
-/* Buttons */
 
 button{
 
 margin:10px;
-
 padding:12px 25px;
-
 font-size:16px;
-
 border:none;
-
 border-radius:10px;
-
 cursor:pointer;
 
 }
-
 
 </style>
 
@@ -57,7 +36,7 @@ cursor:pointer;
 
 <body>
 
-<h2>Photo Enhancer</h2>
+<h2>HD Photo Enhancer</h2>
 
 <input type="file" id="upload">
 
@@ -69,21 +48,22 @@ cursor:pointer;
 <br>
 
 <button onclick="enhance()">
-Enhance
+Enhance Quality
 </button>
 
 <button onclick="download4K()">
-Download 4K
+Download HD
 </button>
 
 
 <script>
 
-let originalImage;
+let imgData;
+let imgObj;
 
 
 
-document.getElementById("upload").onchange=function(e){
+upload.onchange=function(e){
 
 let file=e.target.files[0];
 
@@ -93,9 +73,11 @@ reader.onload=function(){
 
 preview.src=reader.result;
 
-originalImage=new Image();
+imgObj=new Image();
 
-originalImage.src=reader.result;
+imgObj.src=reader.result;
+
+imgData=reader.result;
 
 }
 
@@ -109,13 +91,13 @@ function enhance(){
 
 preview.style.filter=
 
-"contrast(115%) brightness(105%) saturate(110%) sharpen(1.2)";
+"contrast(120%) brightness(105%) saturate(110%)";
 
 }
 
 
 
-/* 4K Download */
+/* Keep Ratio + Increase Pixels */
 
 function download4K(){
 
@@ -124,16 +106,35 @@ let canvas=document.createElement("canvas");
 let ctx=canvas.getContext("2d");
 
 
-canvas.width=2160;
-canvas.height=3840;
+let ratio=imgObj.width/imgObj.height;
 
 
-ctx.drawImage(originalImage,0,0,2160,3840);
+/* Increase Resolution */
 
+let newWidth=2160;
+
+let newHeight=newWidth/ratio;
+
+
+canvas.width=newWidth;
+canvas.height=newHeight;
+
+
+/* Draw Image */
+
+ctx.imageSmoothingEnabled=true;
+
+ctx.imageSmoothingQuality="high";
+
+
+ctx.drawImage(imgObj,0,0,newWidth,newHeight);
+
+
+/* Download */
 
 let link=document.createElement("a");
 
-link.download="Enhanced_4K.png";
+link.download="Enhanced_HD.png";
 
 link.href=canvas.toDataURL();
 
