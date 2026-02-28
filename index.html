@@ -7,7 +7,7 @@
 
 body{
 margin:0;
-background:#111;
+background:#000;
 color:white;
 font-family:sans-serif;
 text-align:center;
@@ -44,23 +44,16 @@ cursor:pointer;
 
 <img id="preview">
 
-
 <br>
 
-<button onclick="enhance()">
-Enhance Quality
-</button>
-
-<button onclick="download4K()">
-Download HD
+<button onclick="downloadHD()">
+Download High Quality
 </button>
 
 
 <script>
 
-let imgData;
 let imgObj;
-
 
 
 upload.onchange=function(e){
@@ -74,10 +67,7 @@ reader.onload=function(){
 preview.src=reader.result;
 
 imgObj=new Image();
-
 imgObj.src=reader.result;
-
-imgData=reader.result;
 
 }
 
@@ -87,43 +77,37 @@ reader.readAsDataURL(file);
 
 
 
-function enhance(){
-
-preview.style.filter=
-
-"contrast(120%) brightness(105%) saturate(110%)";
-
-}
-
-
-
-/* Keep Ratio + Increase Pixels */
-
-function download4K(){
+function downloadHD(){
 
 let canvas=document.createElement("canvas");
 
 let ctx=canvas.getContext("2d");
 
 
+/* Ratio Same */
+
 let ratio=imgObj.width/imgObj.height;
 
 
-/* Increase Resolution */
+/* Pixel Increase */
 
-let newWidth=2160;
-
-let newHeight=newWidth/ratio;
+let newWidth=imgObj.width*3;
+let newHeight=imgObj.height*3;
 
 
 canvas.width=newWidth;
 canvas.height=newHeight;
 
 
-/* Draw Image */
+/* Pure Black Background */
+
+ctx.fillStyle="#000000";
+ctx.fillRect(0,0,newWidth,newHeight);
+
+
+/* High Quality Render */
 
 ctx.imageSmoothingEnabled=true;
-
 ctx.imageSmoothingQuality="high";
 
 
@@ -134,16 +118,15 @@ ctx.drawImage(imgObj,0,0,newWidth,newHeight);
 
 let link=document.createElement("a");
 
-link.download="Enhanced_HD.png";
+link.download="Enhanced_Dark.png";
 
-link.href=canvas.toDataURL();
+link.href=canvas.toDataURL("image/png");
 
 link.click();
 
 }
 
 </script>
-
 
 </body>
 </html>
